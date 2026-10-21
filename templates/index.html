@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEL | Machine Health Monitoring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body data-role="{{ session.get('role', 'Viewer') }}">
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">BEL</div>
+      <div class="brand-text"><strong>BHARAT ELECTRONICS LIMITED</strong><span>Quality&nbsp;&nbsp; Technology&nbsp;&nbsp; Innovation</span></div>
+    </div>
+    <nav class="side-nav">
+      <a class="nav-item active" href="#overview" data-section="overview"><span class="nav-icon">⌂</span>Dashboard</a>
+      <a class="nav-item" href="#monitoring" data-section="monitoring"><span class="nav-icon">⚙</span>Machine Monitoring <span class="nav-arrow">›</span></a>
+      <a class="nav-item" href="#explorer" data-section="explorer"><span class="nav-icon">▥</span>Data Explorer <span class="nav-arrow">›</span></a>
+      <a class="nav-item" href="#reports" data-section="reports"><span class="nav-icon">▤</span>Reports</a>
+      <a class="nav-item" href="#settings" data-section="settings"><span class="nav-icon">⚙</span>Settings</a>
+    </nav>
+    <div class="sidebar-callout">
+      <div class="pulse-line">∿</div>
+      <strong>Machine Health<br>Monitoring &amp;<br>Predictive Maintenance</strong>
+      <p>Smarter insights.<br>Higher uptime.</p>
+    </div>
+    <div class="sidebar-footer">BEL · Machine Intelligence</div>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <button class="menu-button" id="menuButton" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-spacer"></div>
+      <span class="online"><i></i>System Online</span>
+      <span class="top-date">▣ <span id="currentDate">Loading date…</span></span>
+      <div class="user-menu">
+        <div class="avatar">{{ (session.get('username') or 'U')[:2]|upper }}</div>
+        <div><strong>{{ session.get('username', 'User') }}</strong><small>{{ session.get('role', 'Viewer') }}</small></div>
+        <form method="post" action="{{ url_for('auth.logout') }}"><button class="logout-button" title="Log out">⌄</button></form>
+      </div>
+    </header>
+
+    <section class="hero" id="overview">
+      <div class="hero-copy">
+        <div class="hero-symbol">♙</div>
+        <div><h1>Machine Health Monitoring Dashboard</h1><p>Real-time insights into machine health, sensor readings and predictive maintenance</p></div>
+      </div>
+      <div class="hero-promise"><strong>Predict Today</strong><strong>Prevent Tomorrow</strong><span>⬡</span></div>
+    </section>
+
+    <div class="content">
+      <div class="kpi-grid">
+        <article class="kpi-card blue"><div class="kpi-icon">▣</div><div><span>Total Readings</span><strong id="totalReadings">—</strong><small>Sensor observations</small></div><div class="spark">⌁</div></article>
+        <article class="kpi-card green"><div class="kpi-icon">▦</div><div><span>Machines Monitored</span><strong id="machinesMonitored">—</strong><small>Active machine IDs</small></div><div class="spark">⌁</div></article>
+        <article class="kpi-card red"><div class="kpi-icon">⚠</div><div><span>Readings Requiring Review</span><strong id="alertCount">—</strong><small>Check required</small></div><div class="spark">⌁</div></article>
+        <article class="kpi-card teal"><div class="kpi-icon">✓</div><div><span>Normal Readings</span><strong id="normalCount">—</strong><small>Within demo thresholds</small></div><div class="spark">⌁</div></article>
+      </div>
+
+      <div class="dashboard-grid">
+        <section class="panel readings-panel" id="monitoring">
+          <div class="panel-heading"><h2><span>⚙</span> Sensor Readings Overview</h2><div class="filter-group"><select id="machineFilter" aria-label="Filter machine"><option value="all">All machines</option></select><select id="metricFilter" aria-label="Select metric"><option value="temperature">Temperature</option><option value="vibration">Vibration</option><option value="pressure">Pressure</option></select></div></div>
+          <div class="charts-grid">
+            <div class="chart-card"><div class="chart-title"><span class="chart-icon">♨</span><div><strong>Temperature</strong><small>°C</small></div></div><canvas id="temperatureChart"></canvas></div>
+            <div class="chart-card"><div class="chart-title"><span class="chart-icon">≋</span><div><strong>Vibration</strong><small>mm/s</small></div></div><canvas id="vibrationChart"></canvas></div>
+            <div class="chart-card"><div class="chart-title"><span class="chart-icon">◉</span><div><strong>Pressure</strong><small>bar</small></div></div><canvas id="pressureChart"></canvas></div>
+          </div>
+        </section>
+
+        <section class="panel status-panel">
+          <div class="panel-heading dark"><h2>Machine Status</h2><span class="heading-note">Live summary</span></div>
+          <div id="machineStatusList" class="machine-status-list"><div class="empty-state">Loading machine status…</div></div>
+        </section>
+
+        <section class="panel summary-panel">
+          <div class="panel-heading dark"><h2>Machine Health Summary</h2><span class="heading-note">By machine</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Machine ID</th><th>Total readings</th><th>Avg. temperature</th><th>Avg. vibration</th><th>Avg. pressure</th><th>Alert readings</th><th>Alert %</th><th>Status</th></tr></thead><tbody id="summaryBody"><tr><td colspan="8">Loading summary…</td></tr></tbody></table></div>
+        </section>
+
+        <section class="panel distribution-panel">
+          <div class="panel-heading dark"><h2>Machine Health Distribution</h2></div>
+          <div class="distribution-content"><div class="donut-wrap"><canvas id="healthChart"></canvas><div class="donut-center"><strong id="healthMachineCount">0</strong><small>Machines</small></div></div><div class="legend" id="healthLegend"></div></div>
+        </section>
+
+        <section class="panel alerts-panel" id="explorer">
+          <div class="panel-heading"><h2><span class="warning-icon">⚠</span> Readings Requiring Review</h2><span class="subtle" id="alertSubtext">Latest flagged readings</span></div>
+          <div class="table-wrap"><table><thead><tr><th>Timestamp</th><th>Machine ID</th><th>Temperature</th><th>Vibration</th><th>Pressure</th><th>Review status</th></tr></thead><tbody id="alertsBody"><tr><td colspan="6">Loading alerts…</td></tr></tbody></table></div>
+        </section>
+
+        <section class="panel insights-panel">
+          <div class="panel-heading dark"><h2>Quick Insights</h2></div>
+          <div id="insights" class="insights-list"><p>Calculating insights…</p></div>
+        </section>
+
+        <section class="panel reports-panel" id="reports">
+          <div class="panel-heading"><h2><span>▤</span> Reports &amp; Exports</h2></div>
+          <div class="report-actions">
+            <div style="flex:1;min-width:220px">
+              <strong>Individual machine health report</strong>
+              <p>Select a machine and optional date range to review its sensor statistics and flagged readings.</p>
+              <div class="filter-group" style="flex-wrap:wrap;margin-top:12px">
+                <select id="reportMachine" aria-label="Machine report selection"><option value="">Select machine</option></select>
+                <input type="date" id="reportStart" aria-label="Report start date">
+                <input type="date" id="reportEnd" aria-label="Report end date">
+                <button class="primary-button" id="generateReport" type="button">Generate report</button>
+              </div>
+            </div>
+            <a class="primary-button" id="exportButton" href="/api/export.csv">Export all CSV ↓</a>
+          </div>
+          <div id="machineReportResult" style="margin-top:18px"><p class="permission-note">Choose a machine and select Generate report.</p></div>
+          <p class="permission-note">CSV downloads are restricted to Admin and Maintenance Engineer accounts.</p>
+        </section>
+
+        <section class="panel" id="settings" style="grid-column:1/-1">
+          <div class="panel-heading"><h2><span>⚙</span> Settings &amp; User Management</h2></div>
+          <div id="settingsRestricted" class="permission-note">User management is available to Admin only.</div>
+          <div id="adminSettings" style="display:none">
+            <h3 style="margin:12px 0">Create account</h3>
+            <form id="createUserForm" class="filter-group" style="flex-wrap:wrap;align-items:end">
+              <label>Username<br><input id="newUsername" required maxlength="80" autocomplete="off"></label>
+              <label>Temporary password (12+ characters)<br><input id="newPassword" type="password" required minlength="12" autocomplete="new-password"></label>
+              <label>Role<br><select id="newRole"><option>Viewer</option><option>Operator</option><option>Maintenance Engineer</option><option>Admin</option></select></label>
+              <button class="primary-button" type="submit">Create user</button>
+            </form>
+            <div id="settingsMessage" class="permission-note" role="status"></div>
+            <h3 style="margin:20px 0 8px">Registered accounts</h3>
+            <div class="table-wrap"><table><thead><tr><th>Username</th><th>Role</th><th>Active</th><th>Created</th></tr></thead><tbody id="usersBody"><tr><td colspan="4">Loading accounts…</td></tr></tbody></table></div>
+          </div>
+        </section>
+      </div>
+      <footer class="page-footer"><span>BEL Machine Health Monitoring &amp; Predictive Maintenance</span><span>Built with Python · Flask · MinIO-ready data layers</span></footer>
+      <div id="toast" class="toast" role="status"></div>
+    </div>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

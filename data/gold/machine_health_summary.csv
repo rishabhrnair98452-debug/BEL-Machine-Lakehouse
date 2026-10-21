@@ -1,0 +1,4 @@
+machine_id,total_readings,average_temperature,average_vibration,average_pressure,alert_readings,alert_percentage,monitoring_status
+MACH-001,38,68.74,5.26,5.66,25,65.79,REVIEW_REQUIRED
+MACH-002,34,73.71,5.07,5.76,26,76.47,REVIEW_REQUIRED
+MACH-003,28,65.87,5.6,5.52,19,67.86,REVIEW_REQUIRED

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BEL | Secure Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #071a35, #123f70, #087e8b);
+        }
+
+        .login-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 850px;
+            max-width: 100%;
+            min-height: 500px;
+            background: #ffffff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .welcome-panel {
+            padding: 45px 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            background: linear-gradient(150deg, #102e54, #075b78);
+        }
+
+        .brand {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .welcome-panel h1 {
+            font-size: 27px;
+            line-height: 1.35;
+            margin-bottom: 18px;
+        }
+
+        .welcome-panel p {
+            color: #d3e5f5;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .system-label {
+            display: inline-block;
+            width: fit-content;
+            margin-top: 30px;
+            padding: 9px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 7px;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .form-panel {
+            padding: 45px 38px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-panel h2 {
+            color: #102e54;
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d7e0ea;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #087e8b;
+            box-shadow: 0 0 0 3px rgba(8, 126, 139, 0.12);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 8px;
+            background: #123f70;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .login-button:hover {
+            background: #087e8b;
+        }
+
+        .security-note {
+            text-align: center;
+            margin-top: 22px;
+            color: #8492a6;
+            font-size: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        @media (max-width: 650px) {
+            .login-container {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-panel {
+                padding: 30px 25px;
+            }
+
+            .welcome-panel h1 {
+                font-size: 23px;
+            }
+
+            .form-panel {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <section class="welcome-panel">
+            <div class="brand">BEL</div>
+
+            <h1>Machine Health Monitoring & Predictive Maintenance</h1>
+
+            <p>
+                A unified data lakehouse platform for machine sensor monitoring,
+                anomaly identification, and data-driven maintenance analysis.
+            </p>
+
+            <div class="system-label">
+                INDUSTRIAL MONITORING PLATFORM
+            </div>
+        </section>
+
+        <section class="form-panel">
+            <h2>Welcome Back</h2>
+
+            <p class="subtitle">
+                Sign in to access your monitoring dashboard.
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div role="alert" style="margin:0 0 16px;padding:11px 13px;border-radius:8px;background:#fff0f0;color:#a61b1b;font-size:14px;">
+                        {% for category, message in messages %}{{ message }}{% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/login">
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Account Category</label>
+                    <select id="role" name="role" required style="width:100%;padding:13px;border:1px solid #d5deea;border-radius:8px;background:#fff;font-size:15px;">
+                        <option value="" disabled selected>Select your role</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Maintenance Engineer">Maintenance Engineer</option>
+                        <option value="Operator">Operator</option>
+                        <option value="Viewer">Viewer</option>
+                    </select>
+                    <small style="display:block;margin-top:6px;color:#667085;">Choose the category assigned to your account.</small>
+                </div>
+
+                <button type="submit" class="login-button">
+                    Sign In →
+                </button>
+
+            </form>
+
+            <div class="security-note">
+                🔒 Authorized access only
+            </div>
+
+            <div class="footer">
+                BEL Machine Lakehouse Project
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

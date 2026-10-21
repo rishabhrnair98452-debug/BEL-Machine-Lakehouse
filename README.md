@@ -1,37 +1,231 @@
-BEL Machine Health Monitoring Dashboard — Updated Project
-=========================================================
+# Unified Data Lakehouse for Machine Health Monitoring and Predictive Maintenance
 
-Includes:
-- Role-aware login: Admin, Maintenance Engineer, Operator, Viewer
-- Admin-only user management in Settings
-- Per-machine report with date filtering, sensor average/min/max, flagged readings and CSV download
-- Existing dashboard and sample Bronze/Silver/Gold CSV layers
+A Flask-based machine health monitoring dashboard designed to organize sensor data, identify potentially abnormal machine conditions, and support predictive maintenance workflows.
 
-SECURITY NOTES
-- Login category is a consistency check only. The database role is authoritative.
-- Admin account creation is performed using create_admin.py; do not add a public sign-up page.
-- Do not share .env or users.db.
-- Demo thresholds (temperature > 80, vibration > 7, pressure outside 4–7) are illustrative only and are not approved machinery safety limits.
+## 📌 Project Overview
 
-SETUP (Windows PowerShell)
-1. Open this project folder in VS Code.
-2. Create/activate a fresh virtual environment if needed:
-   py -3.12 -m venv venv
-   .\venv\Scripts\Activate.ps1
-3. Install packages:
-   python -m pip install -r requirements.txt
-4. Create a .env file in the project root with a private random key:
-   BEL_SECRET_KEY=replace_with_a_long_random_secret
-   Generate a key with:
-   python -c "import secrets; print(secrets.token_hex(32))"
-   Copy the generated value after BEL_SECRET_KEY=. Keep this file private.
-5. Create an administrator account (first run only):
-   python create_admin.py
-   Use a password of at least 12 characters.
-6. Start the app:
-   python app.py
-7. Open http://127.0.0.1:5000
+Industrial machines generate sensor data such as temperature, vibration, and pressure. Monitoring these parameters can help maintenance teams identify unusual operating conditions and investigate potential equipment problems.
 
-If you already have a users.db from your current project, keep it in the project root. The Viewer role is supported by this version; if you need to add a Viewer account, sign in as Admin and use Settings.
+This project demonstrates a data lakehouse workflow that organizes machine sensor data into Bronze, Silver, and Gold layers and presents machine health information through a web-based dashboard.
 
-Important: the ZIP intentionally excludes .env and users.db. Copy your existing users.db into the project root if you want to preserve existing accounts.
+**Project:** Unified Data Lakehouse for Machine Health Monitoring and Predictive Maintenance
+**Organization:** Bharat Electronics Limited (BEL) — Internship Project
+**Technology Focus:** Python, Flask, Pandas, Data Engineering, and Machine Health Monitoring
+
+## 🎯 Objectives
+
+* Organize machine sensor data using a layered data processing approach.
+* Clean and prepare sensor records for analysis.
+* Generate machine-level summaries and identify potentially abnormal readings.
+* Display machine health information through a web dashboard.
+* Support report generation and data export.
+* Establish a foundation for future predictive maintenance and analytics capabilities.
+
+## ✨ Key Features
+
+* **Machine Health Dashboard:** View machine sensor readings and summarized health information.
+* **Sensor Data Processing:** Process and clean machine sensor records using Python and Pandas.
+* **Bronze, Silver, and Gold Layers:** Organize data into raw, cleaned, and analytical stages.
+* **Condition Monitoring:** Identify readings that cross configurable demonstration thresholds.
+* **Machine-Level Reports:** Present summarized information for individual machines.
+* **Data Export:** Export supported reports or dashboard data to CSV.
+* **User Authentication:** Provide a login interface for authorized dashboard access.
+* **Role-Based Access:** Support role-specific access where configured in the application.
+
+> Note: This repository contains a prototype. Demonstration thresholds and synthetic sensor readings must not be treated as validated operational limits for actual industrial equipment.
+
+## 🏗️ Architecture
+
+```text
+       Machine Sensor Data
+                |
+                v
+       +------------------+
+       |   Bronze Layer   |
+       |    Raw Data      |
+       +------------------+
+                |
+                v
+       +------------------+
+       |   Silver Layer   |
+       | Cleaned Data     |
+       +------------------+
+                |
+                v
+       +------------------+
+       |    Gold Layer    |
+       | Analytical Data  |
+       +------------------+
+                |
+                v
+       +------------------+
+       | Python + Pandas  |
+       | Data Processing  |
+       +------------------+
+                |
+                v
+       +------------------+
+       |   Flask Web App  |
+       | Dashboard/Reports|
+       +------------------+
+                |
+                v
+       Machine Health Monitoring
+```
+
+The diagram represents the intended data-processing workflow. Individual integrations should be considered implemented only when they are configured and working in the application.
+
+## 🛠️ Technology Stack
+
+| Technology     | Purpose                                    |
+| -------------- | ------------------------------------------ |
+| Python         | Application and data processing            |
+| Flask          | Web application and backend                |
+| Pandas         | Sensor data cleaning and analysis          |
+| HTML and CSS   | Dashboard and login interface              |
+| JavaScript     | Dashboard interactions                     |
+| SQLite         | Local user database, where configured      |
+| CSV            | Sensor data storage and exchange           |
+| Git and GitHub | Version control and source code management |
+
+## 📂 Project Structure
+
+```text
+BEL_Machine_Lakehouse_Fixed/
+│
+├── app.py
+├── auth.py
+├── create_admin.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+│
+├── data/
+│   ├── silver/
+│   └── gold/
+│
+├── templates/
+│   ├── login.html
+│   └── ...
+│
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+└── venv/                  # Local virtual environment
+```
+
+The exact contents of the `templates/`, `static/`, and `data/` folders may vary depending on your current project files. The local virtual environment and secret configuration should not be committed to GitHub.
+
+## ⚙️ Installation and Setup
+
+### Prerequisites
+
+* Python 3.12 or a compatible Python version
+* Git
+* Visual Studio Code (recommended)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/rishabhrnair98452-debug/BEL-Machine-Lakehouse.git
+```
+
+### 2. Open the Project Folder
+
+```bash
+cd BEL-Machine-Lakehouse
+```
+
+### 3. Create a Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+### 4. Activate the Virtual Environment
+
+**Windows PowerShell:**
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+### 5. Install Dependencies
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 6. Configure Environment Variables
+
+Create a local `.env` file in the project root and configure the secret key required by your application.
+
+Do not publish your real secret key or other credentials on GitHub. Follow the environment variable names expected by your current application.
+
+### 7. Initialize the Admin Account
+
+If your application requires initial user creation, follow the project's configured user setup process. For example:
+
+```bash
+python create_admin.py
+```
+
+Run this command only after reviewing the script and confirming that its database and credential setup match your application.
+
+### 8. Start the Application
+
+```bash
+python app.py
+```
+
+Open the local address printed by Flask in your terminal. The application is intended to run locally unless you separately configure a deployment environment.
+
+## 📊 Data Processing Workflow
+
+### Bronze Layer — Raw Data
+
+Stores incoming sensor records before cleaning or transformation.
+
+### Silver Layer — Cleaned Data
+
+Processes sensor records to improve consistency and prepare the data for analysis.
+
+### Gold Layer — Analytical Data
+
+Contains aggregated information, such as machine-level readings and health summaries, for dashboard reporting.
+
+### Machine Health Monitoring
+
+The application evaluates sensor readings against configured demonstration thresholds to highlight conditions that may require further inspection.
+
+## 🔒 Security Considerations
+
+* Keep `.env` files and secret keys out of version control.
+* Do not upload real passwords, database credentials, or private configuration files.
+* Use authorized and appropriately protected accounts.
+* Review role permissions before using the application with multiple users.
+* Use synthetic or explicitly approved data for demonstrations.
+* Do not connect this prototype to operational industrial equipment without appropriate validation, security review, and authorization.
+
+## 🚀 Future Enhancements
+
+* Integrate a production-ready object storage system for the lakehouse layers.
+* Introduce scalable distributed data processing where required.
+* Implement automated data ingestion and scheduled pipelines.
+* Add time-series trend analysis and configurable alerts.
+* Evaluate machine learning models for predictive maintenance using suitable historical data.
+* Improve audit logging, access controls, and deployment security.
+* Validate thresholds and analytical methods against approved equipment specifications.
+
+## 👨‍💻 Developer
+
+Developed as an internship project focused on data engineering and machine health monitoring.
+
+**GitHub Repository:**
+https://github.com/rishabhrnair98452-debug/BEL-Machine-Lakehouse
+
+---
+
+*This project is a demonstration and development prototype. It is not a certified industrial monitoring or safety system.*

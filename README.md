@@ -33,6 +33,12 @@ This project demonstrates a data lakehouse workflow that organizes machine senso
 * **Role-Based Access:** Support role-specific access where configured in the application.
 
 > Note: This repository contains a prototype. Demonstration thresholds and synthetic sensor readings must not be treated as validated operational limits for actual industrial equipment.
+## 🖥️ Dashboard Preview
+
+The dashboard provides a centralized view of machine health, sensor readings, machine-level reports, and potential maintenance alerts.
+
+![BEL Machine Lakehouse Dashboard](screenshots/dashboard.png)
+
 
 ## 🏗️ Architecture
 
